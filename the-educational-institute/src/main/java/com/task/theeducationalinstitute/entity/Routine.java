@@ -28,5 +28,4 @@ public class Routine {
     private LocalTime startTime;
     private LocalTime endTime;
 
-
 }
