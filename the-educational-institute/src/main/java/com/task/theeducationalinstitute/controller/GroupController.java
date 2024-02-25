@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class GroupController {
 
     @Autowired
-    GroupService groupService;
+    private GroupService groupService;
 
 
 

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class RoutineController {
 
     @Autowired
-    RoutineService routineService;
+    private RoutineService routineService;
 
     @PostMapping
     public RoutineResponse createRoutine(@RequestBody RoutineRequest routineRequest)

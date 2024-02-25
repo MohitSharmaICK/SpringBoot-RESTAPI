@@ -3,6 +3,8 @@ package com.task.theeducationalinstitute.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 /*Using project lombok annotations that decreases boilerplate code such as getter,setter.Also, useful for creating default and all arguments
 constructor.@Builder annotation helps to create instance of this particular class if required using the builder pattern.*/
 @Getter
@@ -19,5 +21,8 @@ public class Group {
     private long groupId;
     private String specialization;      //specialization such as "Computing"/"Networking"/"Multimedia" and so on.
     private String gradeLevel;
+
+    @OneToMany(mappedBy = "group")
+    private List<Routine> routines;
 
 }

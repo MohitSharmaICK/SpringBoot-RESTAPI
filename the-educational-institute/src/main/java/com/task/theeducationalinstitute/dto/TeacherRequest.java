@@ -5,17 +5,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
-/*Created to build the objects using builder annotation in Routine service implementation and wherever required.*/
+import java.time.LocalDate;
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class TeacherInfo {
+@Builder
+public class TeacherRequest {
     private String firstName;
     private String lastName;
-    private String role;
-    private String email;
-    private String phoneNumber;
+    private LocalDate startDate; //creating startDate and endDate to ensure date range to be passed further in the parameters.
+    private LocalDate endDate;
 }

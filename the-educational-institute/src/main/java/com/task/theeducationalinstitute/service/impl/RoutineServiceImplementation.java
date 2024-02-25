@@ -4,20 +4,22 @@ import com.task.theeducationalinstitute.dto.GroupInfo;
 import com.task.theeducationalinstitute.dto.RoutineRequest;
 import com.task.theeducationalinstitute.dto.RoutineResponse;
 import com.task.theeducationalinstitute.dto.TeacherInfo;
+import com.task.theeducationalinstitute.entity.Group;
 import com.task.theeducationalinstitute.entity.Routine;
+import com.task.theeducationalinstitute.entity.Teacher;
 import com.task.theeducationalinstitute.repository.GroupRepository;
 import com.task.theeducationalinstitute.repository.RoutineRepository;
 import com.task.theeducationalinstitute.utils.RoutineUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class RoutineServiceImplementation implements RoutineService{
 
     //we will inject the routineRepository dependency where required.
     @Autowired
     RoutineRepository routineRepository;
 
-    @Autowired
-    GroupRepository groupRepository;
 
     /*
         Creating a routine means saving the routine information in our database.
@@ -27,7 +29,7 @@ public class RoutineServiceImplementation implements RoutineService{
      */
     @Override
     public RoutineResponse createRoutine(RoutineRequest routineRequest) {
-        if(routineRepository.existsByGroupIdTeacherId(routineRequest.getGroupId(), routineRequest.getTeacherId()))
+        if(routineRepository.existsByGroup_GroupIdAndTeacher_TeacherId(routineRequest.getGroupId(), routineRequest.getTeacherId()))
         {
             return RoutineResponse.builder()
                     .responseCode(RoutineUtils.ROUTINE_EXISTS_CODE)
@@ -45,21 +47,27 @@ public class RoutineServiceImplementation implements RoutineService{
                             .build())
                     .build();
         }
+        else {
+            //If the routine doesn't exist/not added yet, newRoutine is created with following members.
+            Routine newRoutine = Routine.builder()
+                    .routineName(routineRequest.getRoutineName())
+                    .routineDate(routineRequest.getRoutineDate())
+                    .startTime(routineRequest.getStartTime())
+                    .endTime(routineRequest.getEndTime())
+                    .group(Group.builder()
+                            .groupId(routineRequest.getGroupId())
+                            .build())
+                    .teacher(Teacher.builder()
+                            .teacherId(routineRequest.getTeacherId())
+                            .build())
+                    .build();
 
-        Routine newRoutine = Routine.builder()
-                .routineName(routineRequest.getRoutineName())
-                .routineDate(routineRequest.getRoutineDate())
-                .startTime(routineRequest.getStartTime())
-                .endTime(routineRequest.getEndTime())
-                //(routineRequest.getGroupId())  // Set groupId
-                //.(routineRequest.getTeacherId())  // Set teacherId
-                .build();
+            Routine savedRoutine = routineRepository.save(newRoutine);
 
-        Routine savedRoutine =routineRepository.save(newRoutine);
-
-        return RoutineResponse.builder()
-                .responseCode(RoutineUtils.ROUTINE_CREATION_CODE)
-                .responseMessage(RoutineUtils.ROUTINE_CREATION_MESSAGE)
-                .build();
+            return RoutineResponse.builder()
+                    .responseCode(RoutineUtils.ROUTINE_CREATION_CODE)
+                    .responseMessage(RoutineUtils.ROUTINE_CREATION_MESSAGE)
+                    .build();
+        }
     }
 }

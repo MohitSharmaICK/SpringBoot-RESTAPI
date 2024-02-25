@@ -5,15 +5,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.time.LocalDate;
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class TeacherResponse {
-    private String firstName;
-    private String lastName;
-    private List<Workload> workloads;
-
+@Builder
+public class Workload {
+        private LocalDate date;
+        private double hours;
+    }
 }

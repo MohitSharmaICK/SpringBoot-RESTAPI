@@ -1,10 +1,9 @@
 package com.task.theeducationalinstitute.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 /*Using project lombok annotations that decreases boilerplate code such as getter,setter.Also, useful for creating default and all arguments
 constructor.@Builder annotation helps to create instance of this particular class if required using the builder pattern.*/
@@ -24,4 +23,7 @@ public class Teacher {
     private String role;            //role indicates if the teacher would be 'tutor' or 'lecturer' for now.
     private String email;
     private String phoneNumber;
+
+    @OneToMany(mappedBy = "teacher")
+    private List<Routine> routines;
 }
