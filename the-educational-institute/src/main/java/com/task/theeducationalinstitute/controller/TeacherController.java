@@ -1,6 +1,6 @@
 package com.task.theeducationalinstitute.controller;
 
-import com.task.theeducationalinstitute.dto.TeacherRequest;
+import com.task.theeducationalinstitute.dto.*;
 import com.task.theeducationalinstitute.service.impl.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.config.ConfigDataNotFoundException;
@@ -23,6 +23,18 @@ public class TeacherController {
         Implemented try-catch block if parameters are passed properly, the response will be 200 OK.
         Else, catch block is implemented where it indicates badRequest.
      */
+
+    @PostMapping
+    public TeacherResponse saveTeacherInfo(@RequestBody TeacherInfo teacherInfo)
+    {
+        return teacherService.saveTeacherInfo(teacherInfo);
+    }
+
+
+    /* This is getMapping for finding out the teacher total workload which requests firstname, lastname, startDate and endDate.
+      Handled required exceptions using ResponseEntity of type <Double> as totalworkHours needs to be returned in double data type.
+     */
+
     @GetMapping(path="{teacherId}/total-workload")
     public ResponseEntity<Double> getTeacherWorkload(@RequestParam("teacherFirstName") String firstName,
                                                      @RequestParam("teacherLastName") String lastName,

@@ -15,4 +15,4 @@ public class Workload {
         private LocalDate date;
         private double hours;
     }
-}
+

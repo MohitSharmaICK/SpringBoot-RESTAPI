@@ -1,5 +1,6 @@
 package com.task.theeducationalinstitute.entity;
 
+import com.task.theeducationalinstitute.utils.TeacherUtils;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,7 +17,8 @@ constructor.@Builder annotation helps to create instance of this particular clas
 @Entity(name="teacher") //specifying the table name as 'teacher' in our database.
 public class Teacher {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)   //using strategy that helps to generate a new id with incremented by 1.
+    @GeneratedValue(generator ="teacher_gen",strategy = GenerationType.AUTO)
+    @SequenceGenerator(name = "teacher_gen", sequenceName = "teacher_seq", initialValue = 100, allocationSize = 1)
     private long teacherId;
     private String firstName;
     private String lastName;

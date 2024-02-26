@@ -14,6 +14,8 @@ import java.util.List;
 public class TeacherResponse {
     private String firstName;
     private String lastName;
-    private List<Workload> workloads;
+   // private List<Workload> workloads;
+    private String responseCode;
+    private String responseMessage;
 
 }

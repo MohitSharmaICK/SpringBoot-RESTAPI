@@ -17,7 +17,7 @@ constructor.@Builder annotation helps to create instance of this particular clas
 @Table(name = "student_group") //using table name as 'student-group' as 'group' name conflicts with SQL reserved word[GROUP].
 public class Group {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)   //using strategy that helps to generate a new id with incremented by 1.
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long groupId;
     private String specialization;      //specialization such as "Computing"/"Networking"/"Multimedia" and so on.
     private String gradeLevel;

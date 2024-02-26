@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TeacherInfo {
+    private Long teacherId; //unique identifier
     private String firstName;
     private String lastName;
     private String role;
