@@ -13,5 +13,7 @@ import lombok.NoArgsConstructor;
 public class GroupResponse {
     private String responseCode;
     private String responseMessage;
+    private String specialization;
+    private String gradeLevel;
 
 }

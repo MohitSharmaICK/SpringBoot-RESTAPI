@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class GroupInfo {
+    private Long groupId;
     private String specialization;
     private String gradeLevel;
 }

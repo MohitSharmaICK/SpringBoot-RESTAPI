@@ -32,7 +32,7 @@ public class TeacherController {
 
 
     /* This is getMapping for finding out the teacher total workload which requests firstname, lastname, startDate and endDate.
-      Handled required exceptions using ResponseEntity of type <Double> as totalworkHours needs to be returned in double data type.
+      Handled required exceptions using ResponseEntity of type <Double> as total work Hours needs to be returned in double data type.
      */
 
     @GetMapping(path="{teacherId}/total-workload")
@@ -43,7 +43,11 @@ public class TeacherController {
     {
         try {
             double totalWorkHours = teacherService.getTotalWorkHours(firstName, lastName, startDate, endDate);
-            return ResponseEntity.ok(totalWorkHours);
+            if(totalWorkHours >= 0) {
+                return ResponseEntity.ok(totalWorkHours);
+            }else{
+                return ResponseEntity.notFound().build();
+            }
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
         }

@@ -4,15 +4,19 @@ import com.task.theeducationalinstitute.dto.TeacherInfo;
 import com.task.theeducationalinstitute.dto.TeacherRequest;
 import com.task.theeducationalinstitute.dto.TeacherResponse;
 import com.task.theeducationalinstitute.dto.Workload;
+import com.task.theeducationalinstitute.entity.Routine;
 import com.task.theeducationalinstitute.entity.Teacher;
 import com.task.theeducationalinstitute.exception.TeacherNotFoundException;
+import com.task.theeducationalinstitute.repository.RoutineRepository;
 import com.task.theeducationalinstitute.repository.TeacherRepository;
 import com.task.theeducationalinstitute.utils.TeacherUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +25,8 @@ public class TeacherServiceImplementation implements TeacherService{
 
     @Autowired
     TeacherRepository teacherRepository;
+    @Autowired
+    private RoutineRepository routineRepository;
 
     /*
         Creating a teacher means saving the teacher information in our database.
@@ -42,20 +48,25 @@ public class TeacherServiceImplementation implements TeacherService{
                         .lastName(teacherInfo.getLastName())
                         .build();
             }
-        }
-            Teacher newTeacher = Teacher.builder()
-                    .firstName(teacherInfo.getFirstName())
-                    .lastName(teacherInfo.getLastName())
-                    .role(teacherInfo.getRole())
-                    .email(teacherInfo.getEmail())
-                    .phoneNumber(teacherInfo.getPhoneNumber())
-                    .build();
+            else
+            {
+                Teacher newTeacher = Teacher.builder()
+                        .firstName(teacherInfo.getFirstName())
+                        .lastName(teacherInfo.getLastName())
+                        .role(teacherInfo.getRole())
+                        .email(teacherInfo.getEmail())
+                        .phoneNumber(teacherInfo.getPhoneNumber())
+                        .build();
 
-            Teacher savedTeacher = teacherRepository.save(newTeacher);
-            return TeacherResponse.builder()
-                    .responseCode(TeacherUtils.TEACHER_CREATION_CODE)
-                    .responseMessage(TeacherUtils.TEACHER_CREATED_MESSAGE)
-                    .build();
+                Teacher savedTeacher = teacherRepository.save(newTeacher);
+                return TeacherResponse.builder()
+                        .responseCode(TeacherUtils.TEACHER_CREATION_CODE)
+                        .responseMessage(TeacherUtils.TEACHER_CREATED_MESSAGE)
+                        .build();
+            }
+        }  else {
+            throw new IllegalArgumentException("Teacher ID cannot be null");
+        }
     }
 
 
@@ -77,11 +88,17 @@ public class TeacherServiceImplementation implements TeacherService{
         Teacher teacher = checkTeacher.get(); //retrieves the Teacher object from <Optional> checkTeacher.
 
         //Working on for specified date range
-        List<Workload> workloads = teacherRepository.findByNameAndDateRange(teacher,startDate,endDate);
+        List<Routine> routines = routineRepository.findByTeacherAndRoutineDateBetween(teacher,startDate,endDate);
 
         //Calculating the total work hours from list of workloads
-        return workloads.stream()
-                .mapToDouble(Workload::getHours)
-                .sum();
+        //Used enhanced for loop to iterate over the routines list. Also, used inbuilt methods getStartTime(), getEndTime(), between(start,end)
+        double totalWorkHours = 0.0;
+        for(Routine routine:routines){
+            LocalTime startTime = routine.getStartTime();
+            LocalTime endTime = routine.getEndTime();
+            Duration duration = Duration.between(startTime,endTime);
+            totalWorkHours = totalWorkHours + duration.toHours();
+        }
+        return totalWorkHours;
     }
 }
