@@ -41,6 +41,10 @@ public class TeacherController {
                                                      @RequestParam("startDate")LocalDate startDate,
                                                      @RequestParam("endDate") LocalDate endDate)
     {
+        if(firstName == null || firstName.isEmpty() || lastName == null || lastName.isEmpty())
+        {
+            return ResponseEntity.badRequest().body(null);
+        }
         try {
             double totalWorkHours = teacherService.getTotalWorkHours(firstName, lastName, startDate, endDate);
             if(totalWorkHours >= 0) {

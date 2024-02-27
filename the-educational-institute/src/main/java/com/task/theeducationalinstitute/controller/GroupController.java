@@ -25,7 +25,7 @@ public class GroupController {
     public ResponseEntity<Double> getGroupWorkload(@RequestParam Long groupId) {
         try {
             double groupTotalHours = groupService.calculateGroupTotalWorkload(groupId);
-            if (groupTotalHours >= 0) {
+            if(groupTotalHours >= 0) {
                 return ResponseEntity.ok(groupTotalHours);
             } else {
                 return ResponseEntity.notFound().build();
