@@ -13,7 +13,7 @@ public class RoutineResponse {
 
     private String responseCode;
     private String responseMessage;
-    private TeacherInfo teacherInfo;    //teacherInfo[a class]consists of teacher name(first,last), id and role.
-    private GroupInfo groupInfo;        //GroupInfo[a class]consists of specialization and gradeLevel.
+    private Long teacherId;    //teacherInfo[a class]consists of teacher name(first,last), id and role.
+    private Long groupId;        //GroupInfo[a class]consists of specialization and gradeLevel.
 
 }

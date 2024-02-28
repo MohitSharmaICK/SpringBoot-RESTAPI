@@ -24,9 +24,15 @@ public class TeacherController {
         Else, catch block is implemented where it indicates badRequest.
      */
 
-    @PostMapping
-    public TeacherResponse saveTeacherInfo(@RequestBody TeacherInfo teacherInfo)
-    {
+    @PostMapping("/create")
+    public TeacherResponse saveTeacherInfo(@RequestBody CreateTeacherRequest request) {
+        TeacherInfo teacherInfo = new TeacherInfo();
+        teacherInfo.setFirstName(request.getFirstName());
+        teacherInfo.setLastName(request.getLastName());
+        teacherInfo.setRole(request.getRole());
+        teacherInfo.setEmail(request.getEmail());
+        teacherInfo.setPhoneNumber(request.getPhoneNumber());
+        // If teacherId is set externally or automatically generated, set it here accordingly
         return teacherService.saveTeacherInfo(teacherInfo);
     }
 
@@ -41,7 +47,7 @@ public class TeacherController {
                                                      @RequestParam("startDate")LocalDate startDate,
                                                      @RequestParam("endDate") LocalDate endDate)
     {
-        if(firstName == null || firstName.isEmpty() || lastName == null || lastName.isEmpty())
+        if(firstName == null || lastName == null)
         {
             return ResponseEntity.badRequest().body(null);
         }

@@ -1,14 +1,12 @@
 package com.task.theeducationalinstitute.service.impl;
 
-import com.task.theeducationalinstitute.dto.TeacherInfo;
-import com.task.theeducationalinstitute.dto.TeacherRequest;
-import com.task.theeducationalinstitute.dto.TeacherResponse;
-import com.task.theeducationalinstitute.dto.Workload;
+import com.task.theeducationalinstitute.dto.*;
 import com.task.theeducationalinstitute.entity.Routine;
 import com.task.theeducationalinstitute.entity.Teacher;
 import com.task.theeducationalinstitute.exception.TeacherNotFoundException;
 import com.task.theeducationalinstitute.repository.RoutineRepository;
 import com.task.theeducationalinstitute.repository.TeacherRepository;
+import com.task.theeducationalinstitute.utils.GroupUtils;
 import com.task.theeducationalinstitute.utils.TeacherUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -36,39 +34,35 @@ public class TeacherServiceImplementation implements TeacherService{
      */
     @Override
     public TeacherResponse saveTeacherInfo(TeacherInfo teacherInfo) {
-        if(teacherInfo.getTeacherId() != null)
-        {
-            Optional<Teacher> existingTeacher = teacherRepository.findById(teacherInfo.getTeacherId());
-            if(existingTeacher.isPresent())
-            {
-                return TeacherResponse.builder()
-                        .responseCode(TeacherUtils.TEACHER_EXISTS_CODE)
-                        .responseMessage(TeacherUtils.TEACHER_EXISTS_MESSAGE)
-                        .firstName(teacherInfo.getFirstName())
-                        .lastName(teacherInfo.getLastName())
-                        .build();
-            }
-            else
-            {
-                Teacher newTeacher = Teacher.builder()
-                        .firstName(teacherInfo.getFirstName())
-                        .lastName(teacherInfo.getLastName())
-                        .role(teacherInfo.getRole())
-                        .email(teacherInfo.getEmail())
-                        .phoneNumber(teacherInfo.getPhoneNumber())
-                        .build();
+        if (teacherInfo.getFirstName() == null || teacherInfo.getLastName() == null || teacherInfo.getEmail() == null || teacherInfo.getRole() == null || teacherInfo.getPhoneNumber() == null) {
+            return TeacherResponse.builder()
+                    .responseCode(TeacherUtils.TEACHER_NULLINFO_CODE)
+                    .responseMessage(TeacherUtils.TEACHER_NULLINFO_MESSAGE)
+                    .build();
+        }
+        try {
+            Teacher newTeacher = Teacher.builder()
+                    .firstName(teacherInfo.getFirstName())
+                    .lastName(teacherInfo.getLastName())
+                    .role(teacherInfo.getRole())
+                    .email(teacherInfo.getEmail())
+                    .phoneNumber(teacherInfo.getPhoneNumber())
+                    .build();
 
-                Teacher savedTeacher = teacherRepository.save(newTeacher);
-                return TeacherResponse.builder()
-                        .responseCode(TeacherUtils.TEACHER_CREATION_CODE)
-                        .responseMessage(TeacherUtils.TEACHER_CREATED_MESSAGE)
-                        .build();
-            }
-        }  else {
-            throw new IllegalArgumentException("Teacher ID cannot be null");
+            Teacher savedTeacher = teacherRepository.save(newTeacher);
+            return TeacherResponse.builder()
+                    .firstName(savedTeacher.getFirstName())
+                    .lastName(savedTeacher.getLastName())
+                    .responseCode(TeacherUtils.TEACHER_CREATION_CODE)
+                    .responseMessage(TeacherUtils.TEACHER_CREATED_MESSAGE)
+                    .build();
+        } catch (Exception ex) {
+            return TeacherResponse.builder()
+                    .responseCode(TeacherUtils.TEACHER_CREATION_ERROR_CODE)
+                    .responseMessage(TeacherUtils.TEACHER_CREATION_ERROR_MESSAGE)
+                    .build();
         }
     }
-
 
     /*
     This is a method getTotalWorkHours that takes firstName, lastName, startDate and endDate as parameters. This method
@@ -80,25 +74,27 @@ public class TeacherServiceImplementation implements TeacherService{
         //retrieve teacher from teacherRepository using provided firstName and lastName
         //Optionals help us to check for uniqueness and using isEmpty() method to verify if it is empty.
         Optional<Teacher> checkTeacher = teacherRepository.findByFirstNameAndLastName(firstName, lastName);
-        if(checkTeacher.isEmpty())
-        {
-            //if teacher is not found, made a custom exception class in exception package. That will throw runtime exception.
-            throw new TeacherNotFoundException("Teacher Not Found");
-        }
-        Teacher teacher = checkTeacher.get(); //retrieves the Teacher object from <Optional> checkTeacher.
+        if(checkTeacher.isPresent()) {
+            Teacher teacher = checkTeacher.get(); //retrieves the Teacher object from <Optional> checkTeacher.
 
-        //Working on for specified date range
-        List<Routine> routines = routineRepository.findByTeacherAndRoutineDateBetween(teacher,startDate,endDate);
+            //Working on for specified date range
+            List<Routine> routines = routineRepository.findByTeacherAndRoutineDateBetween(teacher, startDate, endDate);
 
-        //Calculating the total work hours from list of workloads
-        //Used enhanced for loop to iterate over the routines list. Also, used inbuilt methods getStartTime(), getEndTime(), between(start,end)
-        double totalWorkHours = 0.0;
-        for(Routine routine:routines){
-            LocalTime startTime = routine.getStartTime();
-            LocalTime endTime = routine.getEndTime();
-            Duration duration = Duration.between(startTime,endTime);
-            totalWorkHours = totalWorkHours + duration.toHours();
+            //Calculating the total work hours from list of workloads
+            //Used enhanced for loop to iterate over the routines list. Also, used inbuilt methods getStartTime(), getEndTime(), between(start,end)
+            double totalWorkHours = 0.0;
+            for (Routine routine : routines) {
+                LocalTime startTime = routine.getStartTime();
+                LocalTime endTime = routine.getEndTime();
+                long minutes = Duration.between(startTime, endTime).toMinutes();
+                double hours = minutes/60.0;
+                totalWorkHours += hours;
+            }
+            return totalWorkHours;
         }
-        return totalWorkHours;
+        else {
+            //if teacher is not found, that will throw runtime exception.
+            throw new RuntimeException("Teacher not found for provided first name and last name.");
+        }
     }
 }

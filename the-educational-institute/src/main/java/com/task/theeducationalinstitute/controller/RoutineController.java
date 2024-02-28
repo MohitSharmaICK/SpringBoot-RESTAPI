@@ -1,5 +1,6 @@
 package com.task.theeducationalinstitute.controller;
 
+import com.task.theeducationalinstitute.dto.CreateRoutineRequest;
 import com.task.theeducationalinstitute.dto.RoutineRequest;
 import com.task.theeducationalinstitute.dto.RoutineResponse;
 import com.task.theeducationalinstitute.service.impl.RoutineService;
@@ -16,9 +17,15 @@ public class RoutineController {
     @Autowired
     private RoutineService routineService;
 
-    @PostMapping
-    public RoutineResponse createRoutine(@RequestBody RoutineRequest routineRequest)
-    {
+    @PostMapping("/create")
+    public RoutineResponse createRoutine(@RequestBody CreateRoutineRequest createRoutineRequest) {
+        RoutineRequest routineRequest = new RoutineRequest();
+        routineRequest.setRoutineDate(createRoutineRequest.getRoutineDate());
+        routineRequest.setRoutineName(createRoutineRequest.getRoutineName());
+        routineRequest.setStartTime(createRoutineRequest.getStartTime());
+        routineRequest.setEndTime(createRoutineRequest.getEndTime());
+        routineRequest.setTeacherId(createRoutineRequest.getTeacherId());
+        routineRequest.setGroupId(createRoutineRequest.getGroupId());
         return routineService.createRoutine(routineRequest);
     }
 }

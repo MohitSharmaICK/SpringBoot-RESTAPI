@@ -1,7 +1,6 @@
 package com.task.theeducationalinstitute.controller;
 
-import com.task.theeducationalinstitute.dto.RoutineRequest;
-import com.task.theeducationalinstitute.dto.RoutineResponse;
+import com.task.theeducationalinstitute.dto.*;
 import com.task.theeducationalinstitute.service.impl.RoutineService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,7 +47,14 @@ public class RoutineControllerTest {
         when(routineService.createRoutine(any(RoutineRequest.class))).thenReturn(response);
 
         // Performing the controller call
-        RoutineResponse entity = routineController.createRoutine(request);
+        RoutineResponse entity = routineController.createRoutine(CreateRoutineRequest.builder()
+                .routineDate(LocalDate.now()) // Set routine date to current date
+                .routineName("Example Routine") // Set routine name to an example value
+                .startTime(LocalTime.of(9, 0)) // Set start time to 9:00 AM
+                .endTime(LocalTime.of(10, 0)) // Set end time to 10:00 AM
+                .teacherId(request.getTeacherId())
+                .groupId(request.getGroupId())
+                .build());
 
         // Verifying the response
         assertNotNull(entity);

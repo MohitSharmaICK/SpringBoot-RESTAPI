@@ -1,5 +1,6 @@
 package com.task.theeducationalinstitute.controller;
 
+import com.task.theeducationalinstitute.dto.CreateGroupRequest;
 import com.task.theeducationalinstitute.dto.GroupInfo;
 import com.task.theeducationalinstitute.dto.GroupResponse;
 import com.task.theeducationalinstitute.repository.GroupRepository;
@@ -16,8 +17,11 @@ public class GroupController {
     @Autowired
     private GroupService groupService;
 
-    @PostMapping
-    public GroupResponse createGroup(@RequestBody GroupInfo groupInfo) {
+    @PostMapping("/create")
+    public GroupResponse createGroup(@RequestBody CreateGroupRequest request) {
+        GroupInfo groupInfo = new GroupInfo();
+        groupInfo.setSpecialization(request.getSpecialization());
+        groupInfo.setGradeLevel(request.getGradeLevel());
         return groupService.createGroup(groupInfo);
     }
 
@@ -31,7 +35,7 @@ public class GroupController {
                 return ResponseEntity.notFound().build();
             }
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 }

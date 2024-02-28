@@ -22,44 +22,40 @@ public class GroupServiceImplementation implements GroupService {
     GroupRepository groupRepository;
 
     /*
-    Implemented createGroup method of the service interface that takes groupInfo as object; checked if the groupId is null, if it is then throw an exception
-    or check again for existing groupId as we cant have duplicateFields in database; verify using findById method of repository and using getGroupId() method.
+    Implemented createGroup method of the service interface that takes groupInfo as object; checked if any of the members of groupInfo is null, if it is then throw a custom response code and message;
     Finally, adding new object of Group(unique) to the database using save method of Repository and displaying custom response from GroupUtils class.
      */
     @Override
     public GroupResponse createGroup(GroupInfo groupInfo) {
-        if(groupInfo.getGroupId()!=null) {
-            Optional<Group> existingGroup = groupRepository.findById(groupInfo.getGroupId());
-            if(existingGroup.isPresent())
-            {
-                //returning a response indicating group already exists from util package
-                return GroupResponse.builder()
-                        .responseCode(GroupUtils.GROUP_EXISTS_CODE)
-                        .responseMessage(GroupUtils.GROUP_EXISTS_MESSAGE)
-                        .gradeLevel(groupInfo.getGradeLevel())
-                        .specialization(groupInfo.getSpecialization())
-                        .build();
-            }
-            else {
-                Group newGroup = Group.builder()
-                        .gradeLevel(groupInfo.getGradeLevel())
-                        .specialization(groupInfo.getSpecialization())
-                        .build();
-
-                Group savedGroup = groupRepository.save(newGroup);
-                // Returning a response indicating successful creation from util package
-                return GroupResponse.builder()
-                        .responseCode(GroupUtils.GROUP_CREATED)
-                        .responseMessage(GroupUtils.GROUP_CREATION_MESSAGE)
-                        .gradeLevel(savedGroup.getGradeLevel())
-                        .specialization(savedGroup.getSpecialization())
-                        .build();
-            }
+        if (groupInfo.getSpecialization() == null || groupInfo.getGradeLevel() == null) {
+            return GroupResponse.builder()
+                    .responseCode(GroupUtils.ERROR_CODE)
+                    .responseMessage(GroupUtils.ERROR_MESSAGE)
+                    .build();
         }
-        else {
-            throw new IllegalArgumentException("Group ID cannot be null");
+        try {
+            Group newGroup = Group.builder()
+                    .gradeLevel(groupInfo.getGradeLevel())
+                    .specialization(groupInfo.getSpecialization())
+                    .build();
+
+            Group savedGroup = groupRepository.save(newGroup);
+            // Returning a response indicating successful creation from util package
+            return GroupResponse.builder()
+                    .responseCode(GroupUtils.GROUP_CREATED)
+                    .responseMessage(GroupUtils.GROUP_CREATION_MESSAGE)
+                    .gradeLevel(savedGroup.getGradeLevel())
+                    .specialization(savedGroup.getSpecialization())
+                    .build();
+        } catch (Exception ex) {
+            return GroupResponse.builder()
+                    .responseCode(GroupUtils.ERROR_CODE)
+                    .responseMessage(GroupUtils.ERROR_MESSAGE)
+                    .build();
+
         }
     }
+
 
     /* A method that calculatesGroupTotalWorkload which takes groupId as parameter.Here, at first we need to identify groupId and check if groupId is already
     present in our database; if it exists; we retrieve list of routines from which we will further extract the startTime,endTime as we are required to calculate

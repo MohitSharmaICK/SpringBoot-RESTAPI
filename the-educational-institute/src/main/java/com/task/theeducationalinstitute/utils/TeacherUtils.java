@@ -1,9 +1,13 @@
 package com.task.theeducationalinstitute.utils;
 
 public class TeacherUtils {
-    public static final String TEACHER_EXISTS_CODE = "003";
 
-    public static final String TEACHER_EXISTS_MESSAGE = "The teacher with given teacher id is found!";
+    public static final String TEACHER_NULLINFO_CODE = "007";
+
+    public static final String TEACHER_NULLINFO_MESSAGE = "The teacher with given teacher id is found!";
+    public static final String TEACHER_CREATION_ERROR_CODE = "003";
+
+    public static final String TEACHER_CREATION_ERROR_MESSAGE = "The teacher with given teacher id is found!";
 
     public static final String TEACHER_CREATION_CODE  = "004";
 

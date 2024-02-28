@@ -34,17 +34,6 @@ public class RoutineServiceImplementation implements RoutineService{
             return RoutineResponse.builder()
                     .responseCode(RoutineUtils.ROUTINE_EXISTS_CODE)
                     .responseMessage(RoutineUtils.ROUTINE_EXISTS_MESSAGE)
-                    .groupInfo(GroupInfo.builder()
-                            .specialization(routineRequest.getGroupInfo().getSpecialization())
-                            .gradeLevel(routineRequest.getGroupInfo().getGradeLevel())
-                            .build())
-                    .teacherInfo(TeacherInfo.builder()
-                            .firstName(routineRequest.getTeacherInfo().getFirstName())
-                            .lastName(routineRequest.getTeacherInfo().getLastName())
-                            .role(routineRequest.getTeacherInfo().getRole())
-                            .email(routineRequest.getTeacherInfo().getEmail())
-                            .phoneNumber(routineRequest.getTeacherInfo().getPhoneNumber())
-                            .build())
                     .build();
         }
         else {
@@ -65,6 +54,8 @@ public class RoutineServiceImplementation implements RoutineService{
             Routine savedRoutine = routineRepository.save(newRoutine);
 
             return RoutineResponse.builder()
+                    .teacherId(savedRoutine.getTeacher().getTeacherId())
+                    .groupId(savedRoutine.getGroup().getGroupId())
                     .responseCode(RoutineUtils.ROUTINE_CREATION_CODE)
                     .responseMessage(RoutineUtils.ROUTINE_CREATION_MESSAGE)
                     .build();
