@@ -34,10 +34,11 @@ public class RoutineControllerTest {
         RoutineRequest request = new RoutineRequest().builder()
                 .startTime(LocalTime.of(9, 0))
                 .endTime(LocalTime.of(10, 0))
+                .routineName("Digital Logic")
                 .routineDate(LocalDate.now())
-                .teacherId(101) // Replace teacherId with an actual teacher ID
-                .groupId(1) // Replace groupId with an actual group ID
-                .build(); // Replace groupId with an actual group ID
+                .teacherId(102)
+                .groupId(2)
+                .build();
 
         // Mock service response
         RoutineResponse response = new RoutineResponse();
@@ -49,7 +50,7 @@ public class RoutineControllerTest {
         // Performing the controller call
         RoutineResponse entity = routineController.createRoutine(CreateRoutineRequest.builder()
                 .routineDate(LocalDate.now()) // Set routine date to current date
-                .routineName("Example Routine") // Set routine name to an example value
+                .routineName("Digital Logic") // Set routine name to an example value
                 .startTime(LocalTime.of(9, 0)) // Set start time to 9:00 AM
                 .endTime(LocalTime.of(10, 0)) // Set end time to 10:00 AM
                 .teacherId(request.getTeacherId())

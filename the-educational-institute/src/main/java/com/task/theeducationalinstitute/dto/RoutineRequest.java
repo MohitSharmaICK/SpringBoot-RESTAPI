@@ -20,6 +20,5 @@ public class RoutineRequest {
     private LocalTime endTime;
     private long teacherId;
     private long groupId;
-    private GroupInfo groupInfo;
-    private TeacherInfo teacherInfo;
+
 }

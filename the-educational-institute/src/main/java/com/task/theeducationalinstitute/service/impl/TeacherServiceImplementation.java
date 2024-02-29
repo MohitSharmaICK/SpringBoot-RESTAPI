@@ -3,13 +3,16 @@ package com.task.theeducationalinstitute.service.impl;
 import com.task.theeducationalinstitute.dto.*;
 import com.task.theeducationalinstitute.entity.Routine;
 import com.task.theeducationalinstitute.entity.Teacher;
-import com.task.theeducationalinstitute.exception.TeacherNotFoundException;
 import com.task.theeducationalinstitute.repository.RoutineRepository;
 import com.task.theeducationalinstitute.repository.TeacherRepository;
-import com.task.theeducationalinstitute.utils.GroupUtils;
+import java.time.LocalDate;
+import java.util.List;
 import com.task.theeducationalinstitute.utils.TeacherUtils;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import jdk.jfr.Percentage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -25,6 +28,30 @@ public class TeacherServiceImplementation implements TeacherService{
     TeacherRepository teacherRepository;
     @Autowired
     private RoutineRepository routineRepository;
+
+    /*Created a list of routines for daterange which takes firstName,lastName,startDate and endDate
+
+     */
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    @Override
+    public List<Routine> getRoutinesForTeacherInDateRange(String firstName, String lastName,
+                                                          LocalDate startDate, LocalDate endDate) {
+
+        String jpql = "SELECT r FROM Routine r " +
+                      "JOIN r.teacher t " +
+                      "WHERE t.firstName = :firstName " +
+                       "AND t.lastName = :lastName " +
+                        "AND r.routineDate BETWEEN :startDate AND :endDate";
+        TypedQuery<Routine> query = entityManager.createQuery(jpql, Routine.class);
+        query.setParameter("firstName", firstName);
+        query.setParameter("lastName", lastName);
+        query.setParameter("startDate", startDate);
+        query.setParameter("endDate", endDate);
+
+        return query.getResultList();
+    }
 
     /*
         Creating a teacher means saving the teacher information in our database.
@@ -64,6 +91,8 @@ public class TeacherServiceImplementation implements TeacherService{
         }
     }
 
+
+
     /*
     This is a method getTotalWorkHours that takes firstName, lastName, startDate and endDate as parameters. This method
     has been defined in TeacherService and now being implemented in TeacherServiceImplementation.
@@ -78,7 +107,8 @@ public class TeacherServiceImplementation implements TeacherService{
             Teacher teacher = checkTeacher.get(); //retrieves the Teacher object from <Optional> checkTeacher.
 
             //Working on for specified date range
-            List<Routine> routines = routineRepository.findByTeacherAndRoutineDateBetween(teacher, startDate, endDate);
+            List<Routine> routines = getRoutinesForTeacherInDateRange(firstName, lastName, startDate, endDate);
+
 
             //Calculating the total work hours from list of workloads
             //Used enhanced for loop to iterate over the routines list. Also, used inbuilt methods getStartTime(), getEndTime(), between(start,end)

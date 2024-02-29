@@ -1,6 +1,7 @@
 package com.task.theeducationalinstitute.controller;
 
 import com.task.theeducationalinstitute.dto.*;
+import com.task.theeducationalinstitute.entity.Routine;
 import com.task.theeducationalinstitute.service.impl.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.config.ConfigDataNotFoundException;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/teacher")
@@ -52,7 +54,8 @@ public class TeacherController {
             return ResponseEntity.badRequest().body(null);
         }
         try {
-            double totalWorkHours = teacherService.getTotalWorkHours(firstName, lastName, startDate, endDate);
+            List<Routine> routines = teacherService.getRoutinesForTeacherInDateRange(firstName, lastName, startDate, endDate);
+            double totalWorkHours = teacherService.getTotalWorkHours(firstName, lastName,  startDate, endDate);
             if(totalWorkHours >= 0) {
                 return ResponseEntity.ok(totalWorkHours);
             }else{

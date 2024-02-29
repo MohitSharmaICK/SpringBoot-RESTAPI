@@ -21,6 +21,7 @@ public class GroupServiceImplementation implements GroupService {
     @Autowired
     GroupRepository groupRepository;
 
+
     /*
     Implemented createGroup method of the service interface that takes groupInfo as object; checked if any of the members of groupInfo is null, if it is then throw a custom response code and message;
     Finally, adding new object of Group(unique) to the database using save method of Repository and displaying custom response from GroupUtils class.
@@ -76,7 +77,8 @@ public class GroupServiceImplementation implements GroupService {
                LocalTime startTime = routine.getStartTime();
                LocalTime endTime = routine.getEndTime();
                Duration duration = Duration.between(startTime, endTime);
-               totalWorkloadHours += duration.toHours(); //using toHours() an inbuilt method.
+               double hours = duration.toMinutes() / 60.0;
+               totalWorkloadHours += hours;
            }
            return totalWorkloadHours;
        } else {

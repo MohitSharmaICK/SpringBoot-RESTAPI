@@ -21,7 +21,6 @@ public class GroupResponse {
         return GroupResponse.builder()
                 .responseCode(GroupUtils.ERROR_CODE)
                 .responseMessage(GroupUtils.ERROR_MESSAGE)
-                // You can include additional error information if needed
                 .build();
     }
 }
