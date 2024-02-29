@@ -2,9 +2,11 @@ package com.task.theeducationalinstitute.controller;
 
 import com.task.theeducationalinstitute.dto.*;
 import com.task.theeducationalinstitute.entity.Routine;
+import com.task.theeducationalinstitute.exception.TeacherNotFoundException;
 import com.task.theeducationalinstitute.service.impl.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.config.ConfigDataNotFoundException;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +36,6 @@ public class TeacherController {
         teacherInfo.setRole(request.getRole());
         teacherInfo.setEmail(request.getEmail());
         teacherInfo.setPhoneNumber(request.getPhoneNumber());
-        // If teacherId is set externally or automatically generated, set it here accordingly
         return teacherService.saveTeacherInfo(teacherInfo);
     }
 
@@ -46,7 +47,7 @@ public class TeacherController {
     @GetMapping(path="{teacherId}/total-workload")
     public ResponseEntity<Double> getTeacherWorkload(@RequestParam("teacherFirstName") String firstName,
                                                      @RequestParam("teacherLastName") String lastName,
-                                                     @RequestParam("startDate")LocalDate startDate,
+                                                     @RequestParam("startDate") LocalDate startDate,
                                                      @RequestParam("endDate") LocalDate endDate)
     {
         if(firstName == null || lastName == null)
@@ -54,15 +55,12 @@ public class TeacherController {
             return ResponseEntity.badRequest().body(null);
         }
         try {
-            List<Routine> routines = teacherService.getRoutinesForTeacherInDateRange(firstName, lastName, startDate, endDate);
-            double totalWorkHours = teacherService.getTotalWorkHours(firstName, lastName,  startDate, endDate);
-            if(totalWorkHours >= 0) {
-                return ResponseEntity.ok(totalWorkHours);
-            }else{
-                return ResponseEntity.notFound().build();
-            }
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
+            double totalWorkHours = teacherService.getTotalWorkHours(firstName, lastName, startDate, endDate);
+            return ResponseEntity.ok(totalWorkHours);
+        } catch (TeacherNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 }

@@ -26,7 +26,7 @@ public class GroupController {
     }
 
     @GetMapping(path = "{groupId}/total-groupworkload")
-    public ResponseEntity<Double> getGroupWorkload(@RequestParam Long groupId) {
+    public ResponseEntity<Double> getGroupWorkload(@RequestParam long groupId) {
         try {
             double groupTotalHours = groupService.calculateGroupTotalWorkload(groupId);
             if(groupTotalHours >= 0) {
