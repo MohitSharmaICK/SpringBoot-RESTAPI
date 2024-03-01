@@ -50,7 +50,7 @@ public class TeacherController {
                                                      @RequestParam("startDate") LocalDate startDate,
                                                      @RequestParam("endDate") LocalDate endDate)
     {
-        if(firstName == null || lastName == null)
+        if(firstName == null || lastName == null || startDate == null || endDate == null)
         {
             return ResponseEntity.badRequest().body(null);
         }

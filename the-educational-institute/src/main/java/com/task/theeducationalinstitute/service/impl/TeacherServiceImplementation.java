@@ -32,32 +32,6 @@ public class TeacherServiceImplementation implements TeacherService{
     @Autowired
     private RoutineRepository routineRepository;
 
-    @PersistenceContext
-    private EntityManager entityManager;
-//    @Override
-//    public List<Routine> getRoutinesForTeacherInDateRange(String firstName, String lastName,
-//                                                          LocalDate startDate, LocalDate endDate) {
-//        String sql = "SELECT r.* FROM routine r " +
-//                "JOIN teacher t ON r.teacher_id = t.teacher_id " +
-//                "WHERE t.first_name = :firstName " +
-//                "AND t.last_name = :lastName " +
-//                "AND r.routine_date BETWEEN (" +
-//                "SELECT MIN(routine_date) FROM routine WHERE routine_date BETWEEN :startDate AND :endDate" +
-//                ") AND (" +
-//                "SELECT MAX(routine_date) FROM routine WHERE routine_date BETWEEN :startDate AND :endDate" +
-//                ")";
-//
-//        Query query = entityManager.createNativeQuery(sql, Routine.class);
-//        query.setParameter("firstName", firstName);
-//        query.setParameter("lastName", lastName);
-//        query.setParameter("startDate", startDate);
-//        query.setParameter("endDate", endDate);
-//
-//        return query.getResultList();
-//    }
-
-
-
     /*
         Creating a teacher means saving the teacher information in our database.
         Also, we will check if routine already exists.[Optionally, using a response code and message for now.]
@@ -105,27 +79,22 @@ public class TeacherServiceImplementation implements TeacherService{
      */
     @Override
     public double getTotalWorkHours(String firstName, String lastName, LocalDate startDate, LocalDate endDate) {
-        Optional<Teacher> optionalTeacher = teacherRepository.findByFirstNameAndLastName(firstName, lastName);
+        Optional<Teacher> checkTeacher = teacherRepository.findByFirstNameAndLastName(firstName, lastName);
 
-        if (optionalTeacher.isPresent()) {
-            Teacher teacher = optionalTeacher.get();
-            List<Routine> allRoutines = routineRepository.findByTeacher(teacher);
+        if (checkTeacher.isPresent()) {
+            Teacher teacher = checkTeacher.get(); // Get the teacher from the optional
+
+            List<Routine> allRoutines = routineRepository.findByTeacherAndRoutineDateBetween(teacher, startDate, endDate);
 
             double totalWorkHours = 0.0;
 
-            // Iterate over each routine and check if it falls within the provided date range
+            // Iterate over each routine and calculate the work hours
             for (Routine routine : allRoutines) {
-                LocalDate routineDate = routine.getRoutineDate();
-                if (routineDate.isEqual(startDate) || routineDate.isEqual(endDate) ||
-                        (routineDate.isAfter(startDate) && routineDate.isBefore(endDate))) {
-
-                    // Calculating the work hours for routines within the date range
-                    LocalTime startTime = routine.getStartTime();
-                    LocalTime endTime = routine.getEndTime();
-                    long minutes = Duration.between(startTime, endTime).toMinutes();
-                    double hours = minutes / 60.0;
-                    totalWorkHours += hours;
-                }
+                LocalTime startTime = routine.getStartTime();
+                LocalTime endTime = routine.getEndTime();
+                long minutes = Duration.between(startTime, endTime).toMinutes();
+                double hours = minutes / 60.0;
+                totalWorkHours += hours;
             }
 
             return totalWorkHours;
@@ -133,7 +102,6 @@ public class TeacherServiceImplementation implements TeacherService{
             throw new TeacherNotFoundException("Teacher not found for provided first name and last name.");
         }
     }
-
 }
 
 

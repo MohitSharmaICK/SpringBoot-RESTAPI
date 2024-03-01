@@ -48,7 +48,7 @@ public class TeacherControllerTest {
     @Test
     public void testGetTeacherWorkload_InvalidInput() {
         // Arrange: Define invalid input parameters
-        String firstName = null;
+        String firstName = "Molly";
         String lastName = "Williams";
         LocalDate startDate = LocalDate.of(2022, 1, 1);
         LocalDate endDate = LocalDate.of(2022, 1, 31);
