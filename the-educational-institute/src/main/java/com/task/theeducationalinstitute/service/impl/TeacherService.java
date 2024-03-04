@@ -19,4 +19,6 @@ public interface TeacherService {
 
     //Method that returns a teacher's total work hours(workload) in double. It takes teacher's name's[first & last] as well as Date's[start & end].
     public double getTotalWorkHours(String firstName, String lastName, LocalDate startDate, LocalDate endDate);
+
+    public long getNumberOfDays(LocalDate startDate, LocalDate endDate);
 }

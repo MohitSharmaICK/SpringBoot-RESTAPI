@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
@@ -69,10 +70,12 @@ public class GroupServiceImplementation implements GroupService {
        if(checkGroup.isPresent())
        {
            Group group = checkGroup.get();
+
            List<Routine> routineList = group.getRoutines();
 
            // Initialize total work hours
            double totalWorkloadHours = 0.0;
+
            for (Routine routine : routineList) {                   //Iterating through routineList using for-each loop.
                LocalTime startTime = routine.getStartTime();
                LocalTime endTime = routine.getEndTime();

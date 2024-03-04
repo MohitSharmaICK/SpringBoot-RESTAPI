@@ -25,7 +25,7 @@ public class GroupController {
         return groupService.createGroup(groupInfo);
     }
 
-    @GetMapping(path = "{groupId}/total-groupworkload")
+    @GetMapping(path = "{groupId}/total-groupworkload") //groupId must be passed in the url as well as param value
     public ResponseEntity<Double> getGroupWorkload(@RequestParam long groupId) {
         try {
             double groupTotalHours = groupService.calculateGroupTotalWorkload(groupId);

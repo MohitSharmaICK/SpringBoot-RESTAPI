@@ -16,4 +16,8 @@ public class RoutineResponse {
     private Long teacherId;
     private Long groupId;
 
+    @Builder
+    public RoutineResponse(String responseMessage) {
+        this.responseMessage = responseMessage;
+    }
 }

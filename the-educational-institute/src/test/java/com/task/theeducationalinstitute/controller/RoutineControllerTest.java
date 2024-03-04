@@ -7,8 +7,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.web.server.ResponseStatusException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -29,7 +28,7 @@ public class RoutineControllerTest {
     private RoutineService routineService;
 
     @Test
-    public void testCreateRoutine() {
+    public void testCreateRoutine() throws ResponseStatusException {
         // Mock request body
         RoutineRequest request = new RoutineRequest().builder()
                 .startTime(LocalTime.of(9, 0))
@@ -48,14 +47,17 @@ public class RoutineControllerTest {
         when(routineService.createRoutine(any(RoutineRequest.class))).thenReturn(response);
 
         // Performing the controller call
-        RoutineResponse entity = routineController.createRoutine(CreateRoutineRequest.builder()
-                .routineDate(LocalDate.now()) // Set routine date to current date
-                .routineName("Digital Logic") // Set routine name to an example value
-                .startTime(LocalTime.of(9, 0)) // Set start time to 9:00 AM
-                .endTime(LocalTime.of(10, 0)) // Set end time to 10:00 AM
-                .teacherId(request.getTeacherId())
-                .groupId(request.getGroupId())
-                .build());
+        RoutineResponse entity = routineController.createRoutine(
+                CreateRoutineRequest.builder()
+                        .routineDate(LocalDate.now()) // Set routine date to current date
+                        .routineName("Digital Logic") // Set routine name to an example value
+                        .startTime(LocalTime.of(9, 0)) // Set start time to 9:00 AM
+                        .endTime(LocalTime.of(10, 0)) // Set end time to 10:00 AM
+                        .teacherId(request.getTeacherId())
+                        .groupId(request.getGroupId())
+                        .build()
+        );
+
 
         // Verifying the response
         assertNotNull(entity);
